@@ -1,0 +1,176 @@
+
+const busStations = {
+  'Swargate Bus Stand': {
+    'Shivaji Nagar Bus Stand': { distance: 10, time: 15 },
+    'Katraj Bus Stand': { distance: 5, time: 10 },
+  },
+  'Shivaji Nagar Bus Stand': {
+    'Swargate Bus Stand': { distance: 10, time: 15 },
+    'Katraj Bus Stand': { distance: 10, time: 12 },
+    'Pune Station Bus Stand': { distance: 20, time: 25 },
+  },
+  'Katraj Bus Stand': {
+    'Swargate Bus Stand': { distance: 5, time: 10 },
+    'Shivaji Nagar Bus Stand': { distance: 10, time: 12 },
+    'Pune Station Bus Stand': { distance: 10, time: 15 },
+    'Hadapsar Bus Stand': { distance: 20, time: 30 },
+  },
+  'Pune Station Bus Stand': {
+    'Shivaji Nagar Bus Stand': { distance: 20, time: 25 },
+    'Katraj Bus Stand': { distance: 10, time: 15 },
+    'Hadapsar Bus Stand': { distance: 15, time: 20 },
+    'Kothrud Bus Stand': { distance: 25, time: 35 },
+  },
+  'Hadapsar Bus Stand': {
+    'Katraj Bus Stand': { distance: 20, time: 30 },
+    'Pune Station Bus Stand': { distance: 15, time: 20 },
+    'Kothrud Bus Stand': { distance: 30, time: 40 },
+    'Aundh Bus Stand': { distance: 35, time: 45 },
+  },
+  'Kothrud Bus Stand': {
+    'Pune Station Bus Stand': { distance: 25, time: 35 },
+    'Hadapsar Bus Stand': { distance: 30, time: 40 },
+    'Aundh Bus Stand': { distance: 10, time: 15 },
+    'Wakad Bus Stand': { distance: 20, time: 25 },
+  },
+  'Aundh Bus Stand': {
+    'Hadapsar Bus Stand': { distance: 35, time: 45 },
+    'Kothrud Bus Stand': { distance: 10, time: 15 },
+    'Wakad Bus Stand': { distance: 15, time: 20 },
+    'Baner Bus Stand': { distance: 5, time: 10 },
+  },
+  'Wakad Bus Stand': {
+    'Kothrud Bus Stand': { distance: 20, time: 25 },
+    'Aundh Bus Stand': { distance: 15, time: 20 },
+    'Baner Bus Stand': { distance: 10, time: 15 },
+    'Pimpri Bus Stand': { distance: 25, time: 30 },
+  },
+  'Baner Bus Stand': {
+    'Aundh Bus Stand': { distance: 5, time: 10 },
+    'Wakad Bus Stand': { distance: 10, time: 15 },
+    'Pimpri Bus Stand': { distance: 20, time: 25 },
+    'Chinchwad Bus Stand': { distance: 15, time: 20 },
+  },
+  'Pimpri Bus Stand': {
+    'Wakad Bus Stand': { distance: 25, time: 30 },
+    'Baner Bus Stand': { distance: 20, time: 25 },
+    'Chinchwad Bus Stand': { distance: 10, time: 15 },
+    'Bhosari Bus Stand': { distance: 20, time: 25 },
+  },
+  'Chinchwad Bus Stand': {
+    'Baner Bus Stand': { distance: 15, time: 20 },
+    'Pimpri Bus Stand': { distance: 10, time: 15 },
+    'Bhosari Bus Stand': { distance: 15, time: 20 },
+  },
+  'Bhosari Bus Stand': {
+    'Pimpri Bus Stand': { distance: 20, time: 25 },
+    'Chinchwad Bus Stand': { distance: 15, time: 20 },
+    'Hinjawadi Bus Stand': { distance: 30, time: 35 },
+  },
+  'Hinjawadi Bus Stand': {
+    'Bhosari Bus Stand': { distance: 30, time: 35 },
+    'Kalewadi Bus Stand': { distance: 25, time: 30 },
+  },
+  'Kalewadi Bus Stand': {
+    'Hinjawadi Bus Stand': { distance: 25, time: 30 },
+    'Warje Bus Stand': { distance: 20, time: 25 },
+  },
+  'Warje Bus Stand': {
+    'Kalewadi Bus Stand': { distance: 20, time: 25 },
+    'Khadki Bus Stand': { distance: 15, time: 20 },
+  },
+  'Khadki Bus Stand': {
+    'Warje Bus Stand': { distance: 15, time: 20 },
+    'Vishrantwadi Bus Stand': { distance: 25, time: 30 },
+  },
+  'Vishrantwadi Bus Stand': {
+    'Khadki Bus Stand': { distance: 25, time: 30 },
+    'Balewadi Bus Stand': { distance: 30, time: 35 },
+  },
+  'Balewadi Bus Stand': {
+    'Vishrantwadi Bus Stand': { distance: 30, time: 35 },
+    'Swargate Bus Stand': { distance: 35, time: 40 }, 
+  },
+  
+};
+
+
+function calculate() {
+  
+  const sourceStation = document.getElementById('source').value;
+  const destinationStation = document.getElementById('destination').value;
+
+
+  if (sourceStation === '' || destinationStation === '') {
+    alert('Invalid Source and Destion ');
+    return;
+  }
+
+
+  const stations = Object.keys(busStations);
+  const INF = Number.MAX_SAFE_INTEGER;
+
+
+  const distances = {};
+  const times = {};
+  stations.forEach((station) => {
+    distances[station] = INF;
+    times[station] = INF;
+  });
+  distances[sourceStation] = 0;
+  times[sourceStation] = 0;
+
+  const visited = {};
+  const path = {};
+
+  while (true) {
+    let currentStation = null;
+
+    
+    stations.forEach((station) => {
+      if (
+        !visited[station] &&
+        (currentStation === null ||
+          distances[station] < distances[currentStation])
+      ) {
+        currentStation = station;
+      }
+    });
+
+    if (currentStation === null || distances[currentStation] === INF) {
+      break;
+    }
+
+    visited[currentStation] = true;
+
+   
+    for (const neighbor in busStations[currentStation]) {
+      const distance =
+        distances[currentStation] + busStations[currentStation][neighbor].distance;
+      const time =
+        times[currentStation] + busStations[currentStation][neighbor].time;
+      if (distance < distances[neighbor]) {
+        distances[neighbor] = distance;
+        times[neighbor] = time;
+        path[neighbor] = currentStation;
+      }
+    }
+  }
+
+  
+  const route = [];
+  let current = destinationStation;
+  while (current !== sourceStation) {
+    route.unshift(current);
+    current = path[current];
+  }
+  route.unshift(sourceStation);
+
+  const shortestDistance = distances[destinationStation];
+  const fastestTime = times[destinationStation];
+
+ 
+  document.getElementById('route').textContent = route.join(' -> ');
+  document.getElementById('fare').textContent = `Total Fare: ${shortestDistance} Rs`;
+  document.getElementById('time').textContent = ` Time Required: ${fastestTime} minutes`;
+}
